@@ -544,7 +544,7 @@ let add_wait (task: Xenops_task.task_handle) ~xc ~xs device =
 	if !Xenopsd.run_hotplug_scripts
 	then Hotplug.run_hotplug_script device [ "add" ];
 
-	Hotplug.wait_for_plug task ~xs device;
+	(* Robert Hack Hotplug.wait_for_plug task ~xs device; *)
 	debug "Device.Vbd successfully added; device_is_online = %b" (Hotplug.device_is_online ~xs device);
 	(* 'Normally' we connect devices to other domains, and cannot know whether the
 	   device is 'available' from their userspace (or even if they have a userspace).
