@@ -372,7 +372,7 @@ let request_shutdown ~xs (x: device) (force: bool) =
 
 (** Return the event to wait for when the shutdown has completed *)
 let shutdown_done ~xs (x: device): unit Watch.t =
-	Watch.value_to_appear (backend_shutdown_done_path_of_device ~xs x) |> Watch.map (fun _ -> ())
+	Watch.value_to_become (backend_state_path_of_device ~xs x) (Xenbus_utils.string_of Xenbus_utils.Closed) |> Watch.map (fun _ -> ())
 
 let shutdown_request_clean_shutdown_wait (task: Xenops_task.task_handle) ~xs ~ignore_transients (x: device) =
     debug "Device.Vbd.clean_shutdown_wait %s" (string_of_device x);
@@ -383,7 +383,7 @@ let shutdown_request_clean_shutdown_wait (task: Xenops_task.task_handle) ~xs ~ig
 
 	if cancellable_watch (Device x) [ shutdown_done ] (if ignore_transients then [] else [ error ]) task ~xs ~timeout:!Xenopsd.hotplug_timeout ()
 	then begin
-		debug "Device.Vbd.shutdown_common: shutdown-done appeared";
+		debug "Device.Vbd.shutdown_common: shutdown is done";
 		(* Delete the trees (otherwise attempting to plug the device in again doesn't
            work.) This also clears any stale error nodes. *)
 		Generic.rm_device_state ~xs x
