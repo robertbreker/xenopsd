@@ -523,6 +523,7 @@ let add_async ~xs ~hvm x domid =
 		"type", backendty_of_physty x.phystype;
 		"mode", string_of_mode x.mode;
 		"params", x.params;
+		"direct-io-safe", "1";
 	];
     (* We don't have PV drivers for HVM guests for CDROMs. We prevent
        blkback from successfully opening the device since this can
